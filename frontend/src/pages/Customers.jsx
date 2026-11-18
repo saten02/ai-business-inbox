@@ -35,71 +35,48 @@ function Customers() {
   }, []);
 
   if (loading) {
-    return <h2>Loading customers...</h2>;
+    return (
+      <div className="section-card">
+        <p>Loading customers...</p>
+      </div>
+    );
   }
 
   return (
     <div>
-
       <div className="page-header">
         <h1>Customers</h1>
         <p>Manage your customers</p>
       </div>
 
-      {error && (
-        <div className="error">
-          {error}
-        </div>
-      )}
+      {error && <div className="error">{error}</div>}
 
       <div className="section-card">
-
         {customers.length === 0 ? (
-
           <p>No customers found.</p>
-
         ) : (
-
-          <table>
-
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {customers.map((customer) => (
-
-                <tr key={customer._id}>
-
-                  <td>
-                    {customer.name}
-                  </td>
-
-                  <td>
-                    {customer.email || "-"}
-                  </td>
-
-                  <td>
-                    {customer.phone || "-"}
-                  </td>
-
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
                 </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
-
+              </thead>
+              <tbody>
+                {customers.map((customer) => (
+                  <tr key={customer._id}>
+                    <td>{customer.name}</td>
+                    <td>{customer.email || "-"}</td>
+                    <td>{customer.phone || "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-
       </div>
-
     </div>
   );
 }

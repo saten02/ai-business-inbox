@@ -103,11 +103,23 @@ npm run preview
 ## Deployment notes
 
 - Host frontend (e.g. Vercel) and backend (e.g. Render) separately
+- Backend **Start Command** must be `npm start` (not `npm run dev`)
+- Backend **Root Directory** should be `backend` if the repo is monorepo-style
+- Frontend **Root Directory** should be `frontend`; Vercel SPA rewrites are in `frontend/vercel.json`
 - Set production `MONGO_URI`, unique `JWT_SECRET`, `OPENROUTER_API_KEY`
 - Set `CORS_ORIGIN` to the exact frontend URL(s)
 - Set frontend `VITE_API_URL` to the deployed backend `/api` URL before build
+- Atlas Network Access must allow Render (`0.0.0.0/0` for simple demos, or Render outbound IPs)
+- Safe demo seed (does not wipe users):
+
+```bash
+cd backend
+OWNER_EMAIL=owner@devfurniture.demo npm run seed:safe
+```
+
 - Do not commit `.env` files
 - Health check: `GET /`
+- Do not run root `seed.js` against production; it deletes collections
 
 ## Known limitations
 

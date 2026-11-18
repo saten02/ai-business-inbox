@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import ThemeToggle from "../components/ThemeToggle";
+import {
+  applyTheme,
+  getPreferredTheme,
+  toggleTheme,
+} from "../utils/theme";
 
 function Login() {
-
   const navigate = useNavigate();
 
+  const [theme, setTheme] = useState(getPreferredTheme);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -13,6 +19,10 @@ function Login() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
 
   const handleChange = (e) => {
     setForm({
@@ -28,30 +38,18 @@ function Login() {
     setLoading(true);
 
     try {
-
-      const response = await api.post(
-        "/auth/login",
-        form
-      );
+      const response = await api.post("/auth/login", form);
 
       const { token, user } = response.data;
 
       localStorage.setItem("token", token);
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(user)
-      );
+      localStorage.setItem("user", JSON.stringify(user));
 
       navigate("/dashboard");
-
     } catch (error) {
-
       setError(
-        error.response?.data?.message ||
-        "Login failed"
+        error.response?.data?.message || "Login failed"
       );
-
     } finally {
       setLoading(false);
     }
@@ -59,21 +57,16 @@ function Login() {
 
   return (
     <div className="auth-page">
+      <ThemeToggle
+        theme={theme}
+        onToggle={() => setTheme((current) => toggleTheme(current))}
+      />
 
-      <form
-        className="auth-card"
-        onSubmit={handleSubmit}
-      >
-
+      <form className="auth-card" onSubmit={handleSubmit}>
         <h1>AI Business Inbox</h1>
-
         <h2>Login</h2>
 
-        {error && (
-          <div className="error">
-            {error}
-          </div>
-        )}
+        {error && <div className="error">{error}</div>}
 
         <input
           type="email"
@@ -98,14 +91,9 @@ function Login() {
         </button>
 
         <p>
-          Don't have an account?{" "}
-          <Link to="/register">
-            Register
-          </Link>
+          Don't have an account? <Link to="/register">Register</Link>
         </p>
-
       </form>
-
     </div>
   );
 }

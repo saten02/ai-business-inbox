@@ -48,33 +48,24 @@ function Dashboard() {
           <div className="conversation-item">
             <div>
               <strong>Rahul Sharma</strong>
-              <p>
-                Interested in Office Chair
-              </p>
+              <p>Interested in Office Chair</p>
             </div>
-  
             <span>2 min ago</span>
           </div>
-  
+
           <div className="conversation-item">
             <div>
               <strong>Amit Kumar</strong>
-              <p>
-                Asked for product pricing
-              </p>
+              <p>Asked for product pricing</p>
             </div>
-  
             <span>10 min ago</span>
           </div>
-  
+
           <div className="conversation-item">
             <div>
               <strong>Priya Sharma</strong>
-              <p>
-                Wants to place an order
-              </p>
+              <p>Wants to place an order</p>
             </div>
-  
             <span>25 min ago</span>
           </div>
   
