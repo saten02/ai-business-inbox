@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
 
 const authRoutes = require("./routes/auth.routes");
 const customerRoutes = require("./routes/customer.routes");
@@ -36,6 +37,21 @@ app.use(
 
 // Middleware
 app.use(express.json({ limit: "100kb" }));
+
+// Strip NoSQL operators from request payloads.
+// Express 5 keeps req.query as a getter, so sanitize in place (do not reassign).
+app.use((req, _res, next) => {
+  if (req.body) {
+    mongoSanitize.sanitize(req.body);
+  }
+  if (req.params) {
+    mongoSanitize.sanitize(req.params);
+  }
+  if (req.query) {
+    mongoSanitize.sanitize(req.query);
+  }
+  next();
+});
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

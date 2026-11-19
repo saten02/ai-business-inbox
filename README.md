@@ -37,13 +37,13 @@ npm install
 npm run dev
 ```
 
-4. Seed demo data (from repo root, with `mongosh`):
+4. Seed demo data (from repo root, with `mongosh`) — **local only**:
 
 ```bash
-mongosh mongodb://127.0.0.1:27017/ai_business_inbox seed.js
+ALLOW_DESTRUCTIVE_SEED=true mongosh mongodb://127.0.0.1:27017/ai_business_inbox seed.js
 ```
 
-Optional inbox sample:
+Optional inbox sample (blocked in production / remote URI unless `ALLOW_SEED=true`):
 
 ```bash
 cd backend
@@ -68,12 +68,10 @@ Frontend:
 
 ## Demo account
 
-After seeding:
+After a successful local `seed.js` run, use the credentials printed by the script
+(`owner@abcfurniture.demo` and the local-only password shown there).
 
-- Email: `owner@abcfurniture.demo`
-- Password: `Demo123!`
-
-Change this password for any shared/demo deployment.
+Do not reuse seed passwords on shared or production databases; change them immediately.
 
 ## Main AI workflow
 
@@ -110,16 +108,16 @@ npm run preview
 - Set `CORS_ORIGIN` to the exact frontend URL(s)
 - Set frontend `VITE_API_URL` to the deployed backend `/api` URL before build
 - Atlas Network Access must allow Render (`0.0.0.0/0` for simple demos, or Render outbound IPs)
-- Safe demo seed (does not wipe users):
+- Safe demo seed (does not wipe users; blocked for production/remote URI unless `ALLOW_SEED=true`):
 
 ```bash
 cd backend
 OWNER_EMAIL=owner@devfurniture.demo npm run seed:safe
 ```
 
-- Do not commit `.env` files
+- Do not commit `.env` files; keep `JWT_SECRET` and API keys out of git and rotate if exposed
 - Health check: `GET /`
-- Do not run root `seed.js` against production; it deletes collections
+- Destructive root `seed.js` requires `ALLOW_DESTRUCTIVE_SEED=true` and refuses `NODE_ENV=production`
 
 ## Known limitations
 

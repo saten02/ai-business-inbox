@@ -7,8 +7,34 @@ const Customer = require("../models/Customer");
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
 
+const assertSeedAllowed = () => {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.ALLOW_SEED !== "true"
+  ) {
+    throw new Error(
+      "Refusing seedInbox in production. Set ALLOW_SEED=true only if intentional."
+    );
+  }
+
+  const uri = process.env.MONGO_URI || "";
+  const looksRemote =
+    /mongodb\.net|\.mongo\.|atlas|prod/i.test(uri);
+
+  if (
+    looksRemote &&
+    process.env.ALLOW_SEED !== "true"
+  ) {
+    throw new Error(
+      "Refusing seedInbox against remote/Atlas URI. Set ALLOW_SEED=true to override."
+    );
+  }
+};
+
 const seedInbox = async () => {
   try {
+    assertSeedAllowed();
+
     await mongoose.connect(
       process.env.MONGO_URI
     );

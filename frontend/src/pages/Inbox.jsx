@@ -129,12 +129,11 @@ function Inbox() {
     try {
       setError("");
 
-      // Inbox entry simulates a customer enquiry for the AI workflow
+      // Inbox entry simulates a customer enquiry; senderType is set server-side
       const response = await api.post(
         `/conversations/${selectedConversation._id}/messages`,
         {
           text: messageText,
-          senderType: "customer",
         }
       );
 

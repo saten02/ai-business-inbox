@@ -1,10 +1,35 @@
 // AI Business Inbox - Phase 1 Demo Seed
-// Run:
-// mongosh mongodb://127.0.0.1:27017/ai_business_inbox seed.js
+// Run (LOCAL ONLY):
+//   ALLOW_DESTRUCTIVE_SEED=true mongosh mongodb://127.0.0.1:27017/ai_business_inbox seed.js
+//
+// WARNING: This script DELETES users/businesses/customers/products/
+// conversations/messages/leads. Do NOT run against production.
+// For non-destructive upsert seeding use:
+//   backend/scripts/safeSeedDemoData.js
+
+// Refuse production / accidental runs unless explicitly opted in.
+(() => {
+  const env =
+    typeof process !== "undefined" && process.env
+      ? process.env
+      : {};
+
+  if (env.NODE_ENV === "production") {
+    throw new Error(
+      "Refusing destructive seed: NODE_ENV=production"
+    );
+  }
+
+  if (env.ALLOW_DESTRUCTIVE_SEED !== "true") {
+    throw new Error(
+      "Refusing destructive seed: set ALLOW_DESTRUCTIVE_SEED=true for local use only"
+    );
+  }
+})();
 
 use("ai_business_inbox");
 
-// Safe to re-run: reset demo collections.
+// Destructive reset for local demo only.
 db.users.deleteMany({});
 db.businesses.deleteMany({});
 db.customers.deleteMany({});
@@ -69,8 +94,8 @@ db.users.insertMany([
     name: "Demo Owner",
     email: "owner@abcfurniture.demo",
 
-    // bcrypt hash for Demo123! (cost 12)
-    passwordHash: "$2b$12$M7eo.70zH4fkkREdhHGoPeQsE5fcYfzrqIqMTSFalF6KREpYS9.y2",
+    // bcrypt hash for LocalDev!b3059082 (cost 12) — local only; change after seed
+    passwordHash: "$2b$12$ZjgBQQ8TvBYTWm4PwYVVMujPLyGwnzZUA5hWzeQiE4KIKQkZimG.e",
 
     role: "owner",
     businessId: businessId,
@@ -84,8 +109,8 @@ db.users.insertMany([
     name: "Demo Admin",
     email: "admin@abcfurniture.demo",
 
-    // bcrypt hash for Demo123! (cost 12)
-    passwordHash: "$2b$12$M7eo.70zH4fkkREdhHGoPeQsE5fcYfzrqIqMTSFalF6KREpYS9.y2",
+    // bcrypt hash for LocalDev!b3059082 (cost 12) — local only; change after seed
+    passwordHash: "$2b$12$ZjgBQQ8TvBYTWm4PwYVVMujPLyGwnzZUA5hWzeQiE4KIKQkZimG.e",
 
     role: "admin",
     businessId: businessId,
@@ -493,5 +518,5 @@ print("Demo Business: ABC Furniture");
 print("==============================================");
 
 print("NOTE:");
-print("Demo login: owner@abcfurniture.demo / Demo123!");
-print("Change this password after first local setup.");
+print("Demo login: owner@abcfurniture.demo / LocalDev!b3059082");
+print("Local-only credentials. Change password immediately if DB is shared.");

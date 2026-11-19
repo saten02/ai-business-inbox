@@ -109,8 +109,7 @@ const getConversationById = async (req, res) => {
 const sendMessage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { text, senderType = "user" } =
-      req.body;
+    const { text } = req.body;
 
     const businessId = req.user.businessId;
 
@@ -133,6 +132,10 @@ const sendMessage = async (req, res) => {
         message: "Conversation not found",
       });
     }
+
+    // Inbox send simulates a customer enquiry for the AI workflow.
+    // Never trust client-supplied senderType (blocks forging "ai"/spoofing).
+    const senderType = "customer";
 
     const message = await Message.create({
       conversationId: conversation._id,

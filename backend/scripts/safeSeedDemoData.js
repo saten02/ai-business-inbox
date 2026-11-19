@@ -3,8 +3,11 @@
  * - Does NOT delete users or existing unrelated data
  * - Upserts by stable keys to avoid duplicates
  *
- * Usage:
+ * Usage (non-production):
  *   MONGO_URI="..." OWNER_EMAIL="owner@devfurniture.demo" node scripts/safeSeedDemoData.js
+ *
+ * Production override (explicit):
+ *   ALLOW_SEED=true NODE_ENV=production ... node scripts/safeSeedDemoData.js
  */
 require("dotenv").config();
 
@@ -16,10 +19,36 @@ const OWNER_EMAIL = (
 
 const now = new Date();
 
+function assertSeedAllowed() {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.ALLOW_SEED !== "true"
+  ) {
+    throw new Error(
+      "Refusing seed in production. Set ALLOW_SEED=true only if intentional."
+    );
+  }
+
+  const uri = process.env.MONGO_URI || "";
+  const looksRemote =
+    /mongodb\.net|\.mongo\.|atlas|prod/i.test(uri);
+
+  if (
+    looksRemote &&
+    process.env.ALLOW_SEED !== "true"
+  ) {
+    throw new Error(
+      "Refusing seed against remote/Atlas URI. Set ALLOW_SEED=true to override."
+    );
+  }
+}
+
 async function main() {
   if (!process.env.MONGO_URI) {
     throw new Error("MONGO_URI is required");
   }
+
+  assertSeedAllowed();
 
   await mongoose.connect(process.env.MONGO_URI);
   const db = mongoose.connection.db;
